@@ -25,6 +25,14 @@ infrastructure to run yourself.
   numbered release you can inspect or roll back to.
 - **Config vars / secrets** — environment variables for the app. Secret values
   are write-only: you can set them, but they are never displayed back.
+- **Collaborator** — a user invited to an app's server pool. Collaborators can
+  deploy and manage config vars/secrets for the pool's apps; only the owner
+  manages collaborator access (`openbase access`, or the pool page in the
+  dashboard).
+- **Collaborator** — a user invited to an app's server pool. Collaborators can
+  deploy and manage config vars/secrets for the pool's apps; only the owner
+  manages collaborator access (`openbase access`, or the pool page in the
+  dashboard).
 - **Hostname** — a domain the app serves on (an Openbase subdomain by default;
   custom domains can be added).
 - **Usage / spend** — deployments accrue metered spend against your account's
@@ -68,6 +76,11 @@ openbase ps -a my-app           # current status (alias: status)
 openbase logs -a my-app         # recent logs
 openbase logs -a my-app --tail  # stream new lines (Ctrl-C to stop)
 openbase config -a my-app       # config vars (secret values hidden)
+openbase config set -a my-app K=V           # set plaintext vars, redeploys
+openbase config set --secret -a my-app K=V  # set write-only secrets
+openbase access -a my-app                   # pool owner + collaborators
+openbase access add -a my-app a@b.com       # invite a collaborator (owner)
+openbase access remove -a my-app a@b.com    # remove/revoke (owner)
 openbase releases -a my-app     # recent deploys
 openbase open -a my-app         # open the app in your browser
 ```
