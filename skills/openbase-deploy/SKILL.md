@@ -47,7 +47,8 @@ openbase apps                   # list your apps
 openbase ps -a my-app           # current status (alias: status)
 openbase logs -a my-app         # recent logs
 openbase logs -a my-app --tail  # stream new lines (Ctrl-C to stop)
-openbase config -a my-app       # config vars (secret values hidden)
+openbase config get -a my-app KEY           # one var's value (ALWAYS prefer this)
+openbase config -a my-app --confirm         # ALL config vars (secret values hidden)
 openbase config set -a my-app K=V           # set plaintext vars, redeploys
 openbase config set --secret -a my-app K=V  # set write-only secrets
 openbase access -a my-app                   # pool owner + collaborators
@@ -80,11 +81,13 @@ Add `--json` to most commands for scripting. Anything not covered by a first-cla
 
 - **Deploy didn't start after a push** — confirm the app is connected to the right repository and branch, and that the push landed on that branch.
 - **Build failed** — inspect `openbase releases -a <app>` or wait for the exact commit with `openbase releases wait`; its failure summary reports the release error. `openbase logs` contains application runtime logs, not build progress. Backend build failures are usually a missing dependency; frontend failures are usually a wrong build command, app root, or output directory in the frontend settings.
-- **App runs but returns errors** — check `openbase config -a <app>` for missing config vars, and the runtime logs.
+- **App runs but returns errors** — check `openbase config get -a <app> KEY...` for the config vars you expect (missing keys are reported and exit non-zero), and the runtime logs.
 - **Frontend loads but can't reach the API / CORS errors** — the frontend is pointed at the wrong API origin or a hostname isn't attached; check the app's hostnames in the dashboard.
 - **Deploy blocked or throttled** — check `openbase usage`; you may have hit the monthly spend limit.
 
 ## Safety
 
 - Never paste secret values into shared logs or chat. `openbase config` hides secret values by design; keep it that way.
+- Fetch config vars by key with `openbase config get KEY...` instead of listing everything. The full listing dumps every plaintext value in one output and therefore prompts for confirmation (`--confirm` skips it, and is required non-interactively); an accidental paste or shell substitution of a `get` bounds the exposure to the keys you asked for.
+- Never compose an outbound message (Slack, PR comment, email, webhook) as an inline double-quoted shell string containing command output or backticks — Markdown backticks execute as command substitution. Write the body to a file first and send from the file.
 - Rolling back or re-deploying is safe and reversible. Deleting an app or its data is not — confirm before destructive dashboard actions.
