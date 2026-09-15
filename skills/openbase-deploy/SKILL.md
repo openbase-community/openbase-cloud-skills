@@ -88,6 +88,6 @@ Add `--json` to most commands for scripting. Anything not covered by a first-cla
 ## Safety
 
 - Never paste secret values into shared logs or chat. `openbase config` hides secret values by design; keep it that way.
-- Fetch config vars by key with `openbase config get KEY...` instead of listing everything. The full listing dumps every plaintext value in one output and therefore prompts for confirmation (`--confirm` skips it, and is required non-interactively); an accidental paste or shell substitution of a `get` bounds the exposure to the keys you asked for.
+- Fetch config vars by key with `openbase config get KEY...` instead of listing everything. The full listing dumps every plaintext value in one output and therefore prompts for confirmation (`--confirm` skips it; non-interactive runs without it currently emit a deprecation warning and will become an error); an accidental paste or shell substitution of a `get` bounds the exposure to the keys you asked for.
 - Never compose an outbound message (Slack, PR comment, email, webhook) as an inline double-quoted shell string containing command output or backticks — Markdown backticks execute as command substitution. Write the body to a file first and send from the file.
 - Rolling back or re-deploying is safe and reversible. Deleting an app or its data is not — confirm before destructive dashboard actions.
